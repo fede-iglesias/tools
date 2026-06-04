@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# kt install script. Downloads latest kt release from this repo and installs to /usr/local/bin/kt.
+# kt install script. Downloads latest kt release from fede-iglesias/tools and installs to /usr/local/bin/kt.
 # Usage: curl -fsSL https://raw.githubusercontent.com/fede-iglesias/tools/main/kt/install.sh | bash
 set -euo pipefail
 
@@ -15,7 +15,6 @@ case "$ARCH" in
   *) echo "unsupported arch: $ARCH" >&2; exit 1 ;;
 esac
 
-# Filter kt-v* releases, pick latest (most recent published_at)
 TAG=$(curl -fsSL "https://api.github.com/repos/$REPO/releases?per_page=30" \
   | grep -oE '"tag_name":[[:space:]]*"kt-v[^"]+"' \
   | head -1 \
@@ -29,7 +28,7 @@ fi
 echo "installing kt v$TAG for $OS/$ARCH..."
 
 TMP=$(mktemp -d)
-trap "rm -rf $TMP" EXIT
+trap 'rm -rf "$TMP"' EXIT
 
 ASSET="kt_${TAG}_${OS}_${ARCH}.tar.gz"
 URL="https://github.com/$REPO/releases/download/kt-v$TAG/$ASSET"
